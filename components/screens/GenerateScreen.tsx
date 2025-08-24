@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { GoogleGenAI, Type } from "@google/genai";
 import { ImportData } from '../../types';
 import SparklesIcon from '../icons/SparklesIcon';
-import useLocalStorage from '../../hooks/useLocalStorage';
 
 interface GenerateScreenProps {
   onImport: (data: ImportData) => Promise<boolean>;
@@ -10,7 +9,6 @@ interface GenerateScreenProps {
 }
 
 const GenerateScreen: React.FC<GenerateScreenProps> = ({ onImport, onGenerationSuccess }) => {
-  const [apiKey, setApiKey] = useLocalStorage('gemini-api-key', '');
   const [formData, setFormData] = useState({
     materia: '',
     subtopico: '',
@@ -32,8 +30,8 @@ const GenerateScreen: React.FC<GenerateScreenProps> = ({ onImport, onGenerationS
   };
 
   const validateForm = () => {
-    if (!apiKey.trim()) {
-      setError('A Gemini API Key é obrigatória para gerar questões.');
+    if (!process.env.API_KEY) {
+      setError('A Gemini API Key não foi configurada no ambiente.');
       return false;
     }
     if (!formData.materia.trim() || !formData.subtopico.trim() || !formData.conteudo.trim()) {
@@ -50,7 +48,7 @@ const GenerateScreen: React.FC<GenerateScreenProps> = ({ onImport, onGenerationS
 
     setIsGenerating(true);
     try {
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
       const schema = {
         type: Type.OBJECT,
@@ -123,20 +121,6 @@ const GenerateScreen: React.FC<GenerateScreenProps> = ({ onImport, onGenerationS
              <p className="text-gray-400">Preencha os campos abaixo para gerar questões automaticamente com base em um conteúdo.</p>
         </div>
 
-        <div className="space-y-2">
-            <label htmlFor="apiKey" className="font-semibold text-white">Gemini API Key</label>
-            <input 
-                id="apiKey"
-                type="password" 
-                name="apiKey" 
-                value={apiKey} 
-                onChange={(e) => setApiKey(e.target.value)} 
-                placeholder="Cole sua API Key aqui" 
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-            />
-            <p className="text-xs text-gray-400">Sua chave é salva localmente no seu navegador. Obtenha uma em <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">Google AI Studio</a>.</p>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
                 <label className="font-semibold text-white">Matéria</label>
@@ -163,7 +147,7 @@ const GenerateScreen: React.FC<GenerateScreenProps> = ({ onImport, onGenerationS
 
         <button
             onClick={handleGenerate}
-            disabled={isGenerating || !apiKey.trim() || !formData.materia.trim() || !formData.subtopico.trim() || !formData.conteudo.trim()}
+            disabled={isGenerating || !formData.materia.trim() || !formData.subtopico.trim() || !formData.conteudo.trim()}
             className="w-full bg-indigo-600 text-white font-bold py-4 px-4 rounded-lg shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 transition-all duration-300 disabled:bg-slate-700 disabled:text-gray-400 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-3"
         >
             {isGenerating ? (
