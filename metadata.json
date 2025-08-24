@@ -1,0 +1,5 @@
+{
+  "name": "Quiz de Concursos",
+  "description": "A quiz application to help users prepare for public service exams. It allows importing questions in JSON format and taking customized quizzes by subject and subtopic.",
+  "requestFramePermissions": []
+}

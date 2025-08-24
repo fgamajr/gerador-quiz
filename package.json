@@ -1,0 +1,22 @@
+{
+  "name": "quiz-de-concursos-fullstack",
+  "version": "1.0.0",
+  "description": "A full-stack quiz application for public service exams.",
+  "main": "server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "quiz",
+    "react",
+    "express",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
